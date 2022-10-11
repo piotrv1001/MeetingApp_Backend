@@ -12,5 +12,5 @@ data class User(
     val password: String,
     val name: String,
     val location: String,
-    val meetings: List<String>
+    val meetings: List<String> = emptyList()
 )

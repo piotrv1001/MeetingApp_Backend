@@ -11,5 +11,5 @@ data class Meeting(
     val name: String,
     val duration: Int,
     val date: Long,
-    val users: List<String>
+    val users: List<String> = emptyList()
 )
