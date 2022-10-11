@@ -3,6 +3,7 @@ package com.vassev
 import com.vassev.di.mainModule
 import io.ktor.application.*
 import com.vassev.plugins.*
+import com.vassev.security.token.TokenConfig
 import org.koin.ktor.ext.Koin
 
 fun main(args: Array<String>): Unit =
@@ -13,9 +14,15 @@ fun Application.module() {
     install(Koin) {
         modules(mainModule)
     }
+    val tokenConfig = TokenConfig(
+        issuer = environment.config.property("jwt.issuer").getString(),
+        audience = environment.config.property("jwt.audience").getString(),
+        expiresIn = 365L * 24L * 1000L * 60L * 60L,
+        secret = System.getenv("JWT_SECRET")
+    )
     configureSockets()
-//    configureSecurity()
+    configureSecurity(tokenConfig)
     configureSerialization()
     configureMonitoring()
-    configureRouting()
+    configureRouting(tokenConfig)
 }

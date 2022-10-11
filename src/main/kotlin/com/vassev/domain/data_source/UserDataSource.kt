@@ -8,6 +8,8 @@ interface UserDataSource {
 
     suspend fun getUserById(userId: String): User?
 
+    suspend fun getUserByEmail(email: String): User?
+
     suspend fun insertUser(user: User): Boolean
 
     suspend fun getAllUsersByMeetingId(meetingId: String): List<User>

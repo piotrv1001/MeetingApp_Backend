@@ -8,6 +8,9 @@ import com.vassev.domain.data_source.MeetingDataSource
 import com.vassev.domain.data_source.MessageDataSource
 import com.vassev.domain.data_source.PlanDataSource
 import com.vassev.domain.data_source.UserDataSource
+import com.vassev.security.token.JwtTokenService
+import com.vassev.security.token.TokenConfig
+import com.vassev.security.token.TokenService
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
@@ -41,5 +44,8 @@ val mainModule = module {
         MessageDataSourceImpl(
             db = get()
         )
+    }
+    single<TokenService> {
+        JwtTokenService()
     }
 }

@@ -2,6 +2,11 @@ package com.vassev.routes
 
 import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.User
+import com.vassev.security.requests.LoginRequest
+import com.vassev.security.token.TokenClaim
+import com.vassev.security.token.TokenConfig
+import com.vassev.security.token.TokenResponse
+import com.vassev.security.token.TokenService
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -9,7 +14,9 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 fun Route.user(
-    userDataSource: UserDataSource
+    userDataSource: UserDataSource,
+    tokenService: TokenService,
+    tokenConfig: TokenConfig
 ) {
     route("/user") {
         get {
@@ -44,6 +51,11 @@ fun Route.user(
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
+            val potentialUserWithSameEmail = userDataSource.getUserByEmail(request.email)
+            if(potentialUserWithSameEmail != null) {
+                call.respond(HttpStatusCode.Conflict)
+                return@post
+            }
             val user = User(
                 email = request.email,
                 password = request.password,
@@ -56,6 +68,31 @@ fun Route.user(
                 return@post
             }
             call.respond(HttpStatusCode.OK)
+        }
+        post("/login") {
+            val request = call.receiveOrNull<LoginRequest>() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@post
+            }
+            val requestedUser = userDataSource.getUserByEmail(request.email)
+            if(requestedUser == null || requestedUser.password != request.password) {
+                call.respond(HttpStatusCode.Conflict)
+                return@post
+            }
+            val token = tokenService.generate(
+                config = tokenConfig,
+                TokenClaim(
+                    name = "userId",
+                    value = requestedUser.userId
+                )
+            )
+            call.respond(
+                status = HttpStatusCode.OK,
+                message = TokenResponse(
+                    token = token,
+                    userId = requestedUser.userId
+                )
+            )
         }
     }
 }
