@@ -1,5 +1,6 @@
 package com.vassev.di
 
+import com.vassev.chat_room.RoomController
 import com.vassev.data.data_source.MeetingDataSourceImpl
 import com.vassev.data.data_source.MessageDataSourceImpl
 import com.vassev.data.data_source.PlanDataSourceImpl
@@ -9,7 +10,6 @@ import com.vassev.domain.data_source.MessageDataSource
 import com.vassev.domain.data_source.PlanDataSource
 import com.vassev.domain.data_source.UserDataSource
 import com.vassev.security.token.JwtTokenService
-import com.vassev.security.token.TokenConfig
 import com.vassev.security.token.TokenService
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
@@ -47,5 +47,10 @@ val mainModule = module {
     }
     single<TokenService> {
         JwtTokenService()
+    }
+    single<RoomController> {
+        RoomController(
+            messageDataSource = get()
+        )
     }
 }
