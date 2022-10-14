@@ -3,11 +3,13 @@ package com.vassev.routes
 import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.User
 import com.vassev.security.requests.LoginRequest
+import com.vassev.security.requests.RegisterRequest
 import com.vassev.security.token.TokenClaim
 import com.vassev.security.token.TokenConfig
 import com.vassev.security.token.TokenResponse
 import com.vassev.security.token.TokenService
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -47,7 +49,7 @@ fun Route.user(
             )
         }
         post("/register") {
-            val request = call.receiveOrNull<User>() ?: kotlin.run {
+            val request = call.receiveOrNull<RegisterRequest>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
@@ -93,6 +95,11 @@ fun Route.user(
                     userId = requestedUser.userId
                 )
             )
+        }
+        authenticate {
+            get("/authenticate") {
+                call.respond(HttpStatusCode.OK)
+            }
         }
     }
 }
