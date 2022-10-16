@@ -23,7 +23,7 @@ class UserDataSourceImpl(
     }
 
     override suspend fun getUserById(userId: String): User? {
-        return users.findOneById(userId)
+        return users.findOne(User::userId eq userId)
     }
 
     override suspend fun getUserByEmail(email: String): User? {

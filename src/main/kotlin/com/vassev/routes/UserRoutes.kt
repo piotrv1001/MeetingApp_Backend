@@ -40,7 +40,7 @@ fun Route.user(
             )
         }
         // get all users for 1 meeting
-        get("/{meetingId}") {
+        get("/forMeeting/{meetingId}") {
             val meetingId = call.parameters["meetingId"] ?: ""
             val users = userDataSource.getAllUsersByMeetingId(meetingId)
             call.respond(
