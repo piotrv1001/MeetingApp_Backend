@@ -19,8 +19,8 @@ class MeetingDataSourceImpl(
         return meetings.findOneById(meetingId)
     }
 
-    override suspend fun insertMeeting(meeting: Meeting): Boolean {
-        return meetings.insertOne(meeting).wasAcknowledged()
+    override suspend fun insertMeeting(meeting: Meeting): Meeting {
+        return meeting.apply { meetings.insertOne(meeting) }
     }
 
     override suspend fun getAllMeetingsByUserId(userId: String): List<Meeting> {

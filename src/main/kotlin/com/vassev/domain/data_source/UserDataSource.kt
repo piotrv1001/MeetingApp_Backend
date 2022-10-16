@@ -13,4 +13,6 @@ interface UserDataSource {
     suspend fun insertUser(user: User): Boolean
 
     suspend fun getAllUsersByMeetingId(meetingId: String): List<User>
+
+    suspend fun updateUsersWithMeeting(userIds: List<String>, meetingId: String): Boolean
 }

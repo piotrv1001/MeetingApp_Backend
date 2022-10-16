@@ -46,12 +46,12 @@ fun Route.meeting(
                 location = request.location,
                 users = request.users
             )
-            val wasAcknowledged = meetingDataSource.insertMeeting(meeting)
-            if(!wasAcknowledged) {
-                call.respond(HttpStatusCode.Conflict)
-                return@post
-            }
-            call.respond(HttpStatusCode.OK)
+            val newMeeting = meetingDataSource.insertMeeting(meeting)
+            val meetingId = newMeeting.meetingId
+            call.respond(
+                HttpStatusCode.OK,
+                meetingId
+            )
         }
         put {
             val request = call.receiveOrNull<Meeting>() ?: kotlin.run {
