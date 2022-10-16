@@ -21,7 +21,7 @@ fun Application.configureRouting(tokenConfig: TokenConfig) {
     val tokenService by inject<TokenService>()
     install(Routing) {
         user(userDataSource, tokenService, tokenConfig)
-        meeting(meetingDataSource)
+        meeting(meetingDataSource, userDataSource)
         plan(planDataSource)
         message(messageDataSource)
         webSocketChat(roomController)

@@ -1,6 +1,7 @@
 package com.vassev.routes
 
 import com.vassev.domain.data_source.MeetingDataSource
+import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.Meeting
 import com.vassev.security.requests.MeetingRequest
 import io.ktor.application.*
@@ -10,7 +11,8 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 fun Route.meeting(
-    meetingDataSource: MeetingDataSource
+    meetingDataSource: MeetingDataSource,
+    userDataSource: UserDataSource
 ) {
     route("/meeting") {
         get("/{meetingId}") {
@@ -48,10 +50,12 @@ fun Route.meeting(
             )
             val newMeeting = meetingDataSource.insertMeeting(meeting)
             val meetingId = newMeeting.meetingId
-            call.respond(
-                HttpStatusCode.OK,
-                meetingId
-            )
+            val wasAcknowledged = userDataSource.updateUsersWithMeeting(request.users, meetingId)
+            if(!wasAcknowledged) {
+                call.respond(HttpStatusCode.Conflict)
+                return@post
+            }
+            call.respond(HttpStatusCode.OK)
         }
         put {
             val request = call.receiveOrNull<Meeting>() ?: kotlin.run {

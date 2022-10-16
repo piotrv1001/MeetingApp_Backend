@@ -4,7 +4,6 @@ import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.User
 import com.vassev.security.requests.LoginRequest
 import com.vassev.security.requests.RegisterRequest
-import com.vassev.security.requests.UpdateUserWithMeetingRequest
 import com.vassev.security.token.TokenClaim
 import com.vassev.security.token.TokenConfig
 import com.vassev.security.token.TokenResponse
@@ -101,18 +100,6 @@ fun Route.user(
             get("/authenticate") {
                 call.respond(HttpStatusCode.OK)
             }
-        }
-        put {
-            val request = call.receiveOrNull<UpdateUserWithMeetingRequest>() ?: kotlin.run {
-                call.respond(HttpStatusCode.BadRequest)
-                return@put
-            }
-            val wasAcknowledged = userDataSource.updateUsersWithMeeting(request.userIds, request.meetingId)
-            if(!wasAcknowledged) {
-                call.respond(HttpStatusCode.Conflict)
-                return@put
-            }
-            call.respond(HttpStatusCode.OK)
         }
     }
 }
