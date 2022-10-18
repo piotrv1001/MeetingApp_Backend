@@ -4,8 +4,13 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.vassev.chat_room.ChatSession
+import com.vassev.security.requests.WebSocketRequest
 import com.vassev.security.token.TokenConfig
 import io.ktor.application.*
+import io.ktor.request.*
+import io.ktor.sessions.*
+import io.ktor.util.*
 
 fun Application.configureSecurity(tokenConfig: TokenConfig) {
     authentication {
@@ -23,6 +28,21 @@ fun Application.configureSecurity(tokenConfig: TokenConfig) {
                     JWTPrincipal(credential.payload)
                 } else null
             }
+        }
+    }
+    install(Sessions) {
+        cookie<ChatSession>("SESSION")
+    }
+
+    intercept(ApplicationCallPipeline.Features) {
+        if(call.sessions.get<ChatSession>() == null) {
+            val userId = call.request.queryParameters["userId"] ?: ""
+            val meetingId = call.request.queryParameters["meetingId"] ?: ""
+            call.sessions.set(ChatSession(
+                sessionId = generateNonce(),
+                userId = userId,
+                meetingId = meetingId
+            ))
         }
     }
 }
