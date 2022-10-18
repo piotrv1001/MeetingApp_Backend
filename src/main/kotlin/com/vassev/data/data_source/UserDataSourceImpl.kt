@@ -14,8 +14,8 @@ class UserDataSourceImpl(
 
     private val users = db.getCollection<User>()
 
-    override suspend fun getAllUsersByMeetingId(meetingId: String): List<User> {
-        return users.find(User::meetings contains meetingId).toList()
+    override suspend fun getAllUsersForMeeting(userIds: List<String>): List<User> {
+        return users.find(User::userId `in` userIds).toList()
     }
 
     override suspend fun getAllUsers(): List<User> {

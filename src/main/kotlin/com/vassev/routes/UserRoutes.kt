@@ -4,6 +4,7 @@ import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.User
 import com.vassev.security.requests.LoginRequest
 import com.vassev.security.requests.RegisterRequest
+import com.vassev.security.requests.UsersForMeetingRequest
 import com.vassev.security.token.TokenClaim
 import com.vassev.security.token.TokenConfig
 import com.vassev.security.token.TokenResponse
@@ -40,9 +41,12 @@ fun Route.user(
             )
         }
         // get all users for 1 meeting
-        get("/forMeeting/{meetingId}") {
-            val meetingId = call.parameters["meetingId"] ?: ""
-            val users = userDataSource.getAllUsersByMeetingId(meetingId)
+        get("/forMeeting") {
+            val request = call.receiveOrNull<UsersForMeetingRequest>() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@get
+            }
+            val users = userDataSource.getAllUsersForMeeting(request.userIds)
             call.respond(
                 HttpStatusCode.OK,
                 users
