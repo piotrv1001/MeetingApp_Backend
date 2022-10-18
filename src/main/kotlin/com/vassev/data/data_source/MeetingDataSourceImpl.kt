@@ -2,6 +2,7 @@ package com.vassev.data.data_source
 
 import com.vassev.domain.data_source.MeetingDataSource
 import com.vassev.domain.model.Meeting
+import org.litote.kmongo.MongoOperator
 import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
@@ -30,6 +31,6 @@ class MeetingDataSourceImpl(
     }
 
     override suspend fun updateMeeting(meeting: Meeting): Boolean {
-        return meetings.updateOne(meeting.meetingId, meeting).wasAcknowledged()
+        return meetings.updateOne(Meeting::meetingId eq meeting.meetingId, meeting).wasAcknowledged()
     }
 }
