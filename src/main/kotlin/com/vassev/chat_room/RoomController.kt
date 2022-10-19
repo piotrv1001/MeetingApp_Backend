@@ -22,12 +22,13 @@ class RoomController(
         )
     }
 
-    suspend fun sendMessage(userId: String, meetingId: String ,text: String) {
+    suspend fun sendMessage(userId: String, meetingId: String ,text: String, username: String) {
         val message = Message(
             text = text,
             timestamp = System.currentTimeMillis(),
             userId = userId,
-            meetingId = meetingId
+            meetingId = meetingId,
+            username = username
         )
         messageDataSource.insertMessage(message)
         members.values.forEach{ member ->

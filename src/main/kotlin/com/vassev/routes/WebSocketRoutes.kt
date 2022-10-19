@@ -24,6 +24,7 @@ fun Route.webSocketChat(
         }
         val userId = session.userId
         val meetingId = session.meetingId
+        val username = session.username
         try {
             roomController.onJoin(
                 userId = userId,
@@ -34,6 +35,7 @@ fun Route.webSocketChat(
                     roomController.sendMessage(
                         userId = userId,
                         meetingId = meetingId,
+                        username = username,
                         text = frame.readText()
                     )
                 }

@@ -38,10 +38,12 @@ fun Application.configureSecurity(tokenConfig: TokenConfig) {
         if(call.sessions.get<ChatSession>() == null) {
             val userId = call.request.queryParameters["userId"] ?: ""
             val meetingId = call.request.queryParameters["meetingId"] ?: ""
+            val username = call.request.queryParameters["username"] ?: ""
             call.sessions.set(ChatSession(
                 sessionId = generateNonce(),
                 userId = userId,
-                meetingId = meetingId
+                meetingId = meetingId,
+                username = username
             ))
         }
     }

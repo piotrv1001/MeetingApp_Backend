@@ -11,5 +11,6 @@ data class Message(
     val text: String,
     val timestamp: Long,
     val userId: String,
-    val meetingId: String
+    val meetingId: String,
+    val username: String
 )
