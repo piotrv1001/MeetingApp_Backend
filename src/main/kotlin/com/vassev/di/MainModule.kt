@@ -1,14 +1,8 @@
 package com.vassev.di
 
 import com.vassev.chat_room.RoomController
-import com.vassev.data.data_source.MeetingDataSourceImpl
-import com.vassev.data.data_source.MessageDataSourceImpl
-import com.vassev.data.data_source.PlanDataSourceImpl
-import com.vassev.data.data_source.UserDataSourceImpl
-import com.vassev.domain.data_source.MeetingDataSource
-import com.vassev.domain.data_source.MessageDataSource
-import com.vassev.domain.data_source.PlanDataSource
-import com.vassev.domain.data_source.UserDataSource
+import com.vassev.data.data_source.*
+import com.vassev.domain.data_source.*
 import com.vassev.security.token.JwtTokenService
 import com.vassev.security.token.TokenService
 import org.koin.dsl.module
@@ -35,13 +29,18 @@ val mainModule = module {
             db = get()
         )
     }
-    single<PlanDataSource> {
-        PlanDataSourceImpl(
+    single<MessageDataSource> {
+        MessageDataSourceImpl(
             db = get()
         )
     }
-    single<MessageDataSource> {
-        MessageDataSourceImpl(
+    single<OneTimePlanDataSource> {
+        OneTimePlanDataSourceImpl(
+            db = get()
+        )
+    }
+    single<RepeatedPlanDataSource> {
+        RepeatedPlanDataSourceImpl(
             db = get()
         )
     }

@@ -1,4 +1,4 @@
-package com.vassev.security.token
+package com.vassev.data.responses
 
 import kotlinx.serialization.Serializable
 

@@ -7,7 +7,7 @@ import com.vassev.data.requests.RegisterRequest
 import com.vassev.data.requests.UsersForMeetingRequest
 import com.vassev.security.token.TokenClaim
 import com.vassev.security.token.TokenConfig
-import com.vassev.security.token.TokenResponse
+import com.vassev.data.responses.TokenResponse
 import com.vassev.security.token.TokenService
 import io.ktor.application.*
 import io.ktor.auth.*
