@@ -1,4 +1,4 @@
-package com.vassev.security.requests
+package com.vassev.data.requests
 
 import kotlinx.serialization.Serializable
 

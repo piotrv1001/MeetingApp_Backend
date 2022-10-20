@@ -3,8 +3,8 @@ package com.vassev.routes
 import com.vassev.domain.data_source.MeetingDataSource
 import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.Meeting
-import com.vassev.security.requests.MeetingRequest
-import com.vassev.security.requests.MeetingsForUserRequest
+import com.vassev.data.requests.MeetingRequest
+import com.vassev.data.requests.MeetingsForUserRequest
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*

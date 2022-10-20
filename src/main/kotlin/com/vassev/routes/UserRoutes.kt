@@ -2,9 +2,9 @@ package com.vassev.routes
 
 import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.User
-import com.vassev.security.requests.LoginRequest
-import com.vassev.security.requests.RegisterRequest
-import com.vassev.security.requests.UsersForMeetingRequest
+import com.vassev.data.requests.LoginRequest
+import com.vassev.data.requests.RegisterRequest
+import com.vassev.data.requests.UsersForMeetingRequest
 import com.vassev.security.token.TokenClaim
 import com.vassev.security.token.TokenConfig
 import com.vassev.security.token.TokenResponse

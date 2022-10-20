@@ -5,7 +5,7 @@ import io.ktor.auth.jwt.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.vassev.chat_room.ChatSession
-import com.vassev.security.requests.WebSocketRequest
+import com.vassev.data.requests.WebSocketRequest
 import com.vassev.security.token.TokenConfig
 import io.ktor.application.*
 import io.ktor.request.*

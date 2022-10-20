@@ -2,7 +2,7 @@ package com.vassev.routes
 
 import com.vassev.chat_room.ChatSession
 import com.vassev.chat_room.RoomController
-import com.vassev.security.requests.WebSocketRequest
+import com.vassev.data.requests.WebSocketRequest
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
