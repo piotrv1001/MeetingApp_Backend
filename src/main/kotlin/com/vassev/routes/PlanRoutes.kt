@@ -44,17 +44,31 @@ fun Route.plan(
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
-            val oneTimePlan = OneTimePlan(
-                specificDay = request.specificDay,
-                userId = request.userId,
-                plans = request.plans
-            )
-            val wasAcknowledged = oneTimePlanDataSource.insertOneTimePlan(oneTimePlan)
-            if(!wasAcknowledged) {
-                call.respond(HttpStatusCode.Conflict)
-                return@post
+            val existingPlan = oneTimePlanDataSource.getOneTimePlanForUserOnDay(request.userId, request.specificDay)
+            if(existingPlan == null) {
+                val oneTimePlan = OneTimePlan(
+                    specificDay = request.specificDay,
+                    userId = request.userId,
+                    plans = request.plans
+                )
+                val wasAcknowledged = oneTimePlanDataSource.insertOneTimePlan(oneTimePlan)
+                if(!wasAcknowledged) {
+                    call.respond(HttpStatusCode.Conflict)
+                    return@post
+                }
+                call.respond(HttpStatusCode.OK)
+            } else {
+                val plan = request.plans[0]
+                val userId = request.userId
+                val specificDay = request.specificDay
+                val wasAcknowledged = oneTimePlanDataSource.addPlanToOneTimePlan(userId, specificDay, plan)
+                if(!wasAcknowledged) {
+                    call.respond(HttpStatusCode.Conflict)
+                    return@post
+                }
+                call.respond(HttpStatusCode.OK)
             }
-            call.respond(HttpStatusCode.OK)
+
         }
         put("/oneTimePlan") {
             val request = call.receiveOrNull<OneTimePlanRequest>() ?: kotlin.run {
@@ -73,21 +87,64 @@ fun Route.plan(
             }
             call.respond(HttpStatusCode.OK)
         }
+        put("/oneTimePlan/deletePlan") {
+            val request = call.receiveOrNull<OneTimePlanRequest>() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@put
+            }
+            val plan = request.plans[0]
+            val userId = request.userId
+            val specificDay = request.specificDay
+            val wasAcknowledged = oneTimePlanDataSource.deletePlanFromOneTimePlan(userId, specificDay, plan)
+            if(!wasAcknowledged) {
+                call.respond(HttpStatusCode.Conflict)
+                return@put
+            }
+            call.respond(HttpStatusCode.OK)
+        }
         post("/repeatedPlan") {
             val request = call.receiveOrNull<RepeatedPlanRequest>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
-            val repeatedPlan = RepeatedPlan(
-                dayOfWeek = request.dayOfWeek,
-                userId = request.userId,
-                plans = request.plans,
-                except = request.except
-            )
-            val wasAcknowledged = repeatedPlanDataSource.insertRepeatedPlan(repeatedPlan)
+            val existingPLan = repeatedPlanDataSource.getRepeatedPlanForUser(request.userId, request.dayOfWeek)
+            if(existingPLan == null) {
+                val repeatedPlan = RepeatedPlan(
+                    dayOfWeek = request.dayOfWeek,
+                    userId = request.userId,
+                    plans = request.plans,
+                    except = request.except
+                )
+                val wasAcknowledged = repeatedPlanDataSource.insertRepeatedPlan(repeatedPlan)
+                if(!wasAcknowledged) {
+                    call.respond(HttpStatusCode.Conflict)
+                    return@post
+                }
+                call.respond(HttpStatusCode.OK)
+            } else {
+                val plan = request.plans[0]
+                val userId = request.userId
+                val dayOfWeek = request.dayOfWeek
+                val wasAcknowledged = repeatedPlanDataSource.addPlanToRepeatedPlan(userId, dayOfWeek, plan)
+                if(!wasAcknowledged) {
+                    call.respond(HttpStatusCode.Conflict)
+                    return@post
+                }
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+        put("/repeatedPlan/deletePlan") {
+            val request = call.receiveOrNull<RepeatedPlanRequest>() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@put
+            }
+            val plan = request.plans[0]
+            val userId = request.userId
+            val dayOfWeek = request.dayOfWeek
+            val wasAcknowledged = repeatedPlanDataSource.deletePlanFromRepeatedPlan(userId, dayOfWeek, plan)
             if(!wasAcknowledged) {
                 call.respond(HttpStatusCode.Conflict)
-                return@post
+                return@put
             }
             call.respond(HttpStatusCode.OK)
         }
