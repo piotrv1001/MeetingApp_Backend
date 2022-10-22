@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SpecificDay(
-    val day: Int,
-    val month: Int,
-    val year: Int
+    var day: Int,
+    var month: Int,
+    var year: Int
 )
