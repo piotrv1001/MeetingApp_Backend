@@ -29,8 +29,8 @@ class OneTimePlanDataSourceImpl(
         return oneTimePlans.updateOne(OneTimePlan::oneTimePlanId eq oneTimePlan.oneTimePlanId, oneTimePlan).wasAcknowledged()
     }
 
-    override suspend fun deleteOneTimePlan(oneTimePlan: OneTimePlan): Boolean {
-        return oneTimePlans.deleteOne(OneTimePlan::oneTimePlanId eq oneTimePlan.oneTimePlanId).wasAcknowledged()
+    override suspend fun deleteOneTimePlan(userId: String, specificDay: SpecificDay): Boolean {
+        return oneTimePlans.deleteOne(and(OneTimePlan::userId eq userId, OneTimePlan::specificDay eq specificDay)).wasAcknowledged()
     }
 
     override suspend fun addPlanToOneTimePlan(userId: String, specificDay: SpecificDay, plan: Plan): Boolean {

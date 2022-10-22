@@ -30,12 +30,12 @@ class RepeatedPlanDataSourceImpl(
         return repeatedPlans.updateOne(RepeatedPlan::repeatedPlanId eq repeatedPlan.repeatedPlanId, repeatedPlan).wasAcknowledged()
     }
 
-    override suspend fun deleteRepeatedPlan(repeatedPlan: RepeatedPlan): Boolean {
-        return repeatedPlans.deleteOne(RepeatedPlan::repeatedPlanId eq repeatedPlan.repeatedPlanId).wasAcknowledged()
+    override suspend fun deleteRepeatedPlan(userId: String, dayOfWeek: Int): Boolean {
+        return repeatedPlans.deleteOne(and(RepeatedPlan::userId eq userId, RepeatedPlan::dayOfWeek eq dayOfWeek)).wasAcknowledged()
     }
 
-    override suspend fun addExceptionOnSpecificDay(repeatedPlanId: String, specificDay: SpecificDay): Boolean {
-        return repeatedPlans.updateOne(RepeatedPlan::repeatedPlanId eq repeatedPlanId, addToSet(RepeatedPlan::except, specificDay)).wasAcknowledged()
+    override suspend fun addExceptionOnSpecificDay(userId: String, dayOfWeek: Int, specificDay: SpecificDay): Boolean {
+        return repeatedPlans.updateOne(and(RepeatedPlan::userId eq userId, RepeatedPlan::dayOfWeek eq dayOfWeek), addToSet(RepeatedPlan::except, specificDay)).wasAcknowledged()
     }
 
     override suspend fun addPlanToRepeatedPlan(userId: String, dayOfWeek: Int, plan: Plan): Boolean {

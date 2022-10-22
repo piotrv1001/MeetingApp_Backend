@@ -14,11 +14,11 @@ interface RepeatedPlanDataSource {
 
     suspend fun updateRepeatedPlan(repeatedPlan: RepeatedPlan): Boolean
 
-    suspend fun deleteRepeatedPlan(repeatedPlan: RepeatedPlan): Boolean
+    suspend fun deleteRepeatedPlan(userId: String, dayOfWeek: Int): Boolean
 
     suspend fun addPlanToRepeatedPlan(userId: String, dayOfWeek: Int, plan: Plan): Boolean
 
     suspend fun deletePlanFromRepeatedPlan(userId: String, dayOfWeek: Int, plan: Plan): Boolean
 
-    suspend fun addExceptionOnSpecificDay(repeatedPlanId: String, specificDay: SpecificDay): Boolean
+    suspend fun addExceptionOnSpecificDay(userId: String, dayOfWeek: Int, specificDay: SpecificDay): Boolean
 }

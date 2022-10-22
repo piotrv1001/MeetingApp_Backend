@@ -16,5 +16,5 @@ interface OneTimePlanDataSource {
 
     suspend fun deletePlanFromOneTimePlan(userId: String, specificDay: SpecificDay, plan: Plan): Boolean
 
-    suspend fun deleteOneTimePlan(oneTimePlan: OneTimePlan): Boolean
+    suspend fun deleteOneTimePlan(userId: String, specificDay: SpecificDay): Boolean
 }

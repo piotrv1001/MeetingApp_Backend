@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AddExceptionToRepeatedPlanRequest(
     val specificDay: SpecificDay,
-    val repeatedPlanId: String
+    val userId: String,
+    val dayOfWeek: Int
 )
