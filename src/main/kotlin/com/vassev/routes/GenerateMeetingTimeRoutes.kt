@@ -28,7 +28,8 @@ fun Route.generateMeetingTime(
                 month = todayTime.monthValue,
                 year = todayTime.year
             )
-            val response = generateMeetingTimeService.generateMeetingTime(today, userIds)
+            val duration = meeting.duration
+            val response = generateMeetingTimeService.generateMeetingTime(today, userIds, duration)
             call.respond(
                 HttpStatusCode.OK,
                 response

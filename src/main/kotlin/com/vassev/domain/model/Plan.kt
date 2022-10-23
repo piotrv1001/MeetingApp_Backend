@@ -8,4 +8,23 @@ data class Plan(
     val toHour: Int,
     val fromMinute: Int,
     val toMinute: Int,
-)
+) {
+    fun startTime(): HalfPlan {
+        return HalfPlan(
+            hour = this.fromHour,
+            minute = this.fromMinute
+        )
+    }
+
+    fun endTime(): HalfPlan {
+        return HalfPlan(
+            hour = this.toHour,
+            minute = this.toMinute
+        )
+    }
+
+    fun isWithinRange(duration: Int): Boolean {
+        return (this.toHour * 60 + this.toMinute) - (this.fromHour * 60 + this.fromMinute) >= duration
+    }
+}
+
