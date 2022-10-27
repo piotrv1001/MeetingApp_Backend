@@ -32,7 +32,7 @@ class GenerateMeetingTimeServiceImpl(
             )
             val currentDayOfWeek = date.dayOfWeek.value
             var mergedList = mutableListOf<Plan>()
-            for (user in 0..userIds.size) {
+            for (user in userIds.indices) {
                 val userOneTimePlans = oneTimePlanDataSource.getOneTimePlanForUserOnDay(userIds[user], currentSpecificDay)
                 val userRepeatedPlans = repeatedPlanDataSource.getRepeatedPlanForUserOnDay(userIds[user], currentDayOfWeek, currentSpecificDay)
                 val userPlans = getUsersPlans(userOneTimePlans?.plans, userRepeatedPlans?.plans).toMutableList()
