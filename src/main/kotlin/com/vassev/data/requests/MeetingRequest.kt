@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class MeetingRequest(
     val name: String,
     val duration: Int,
-    val date: Long,
+    val date: String,
     val location: String,
     val users: List<String> = emptyList()
 )

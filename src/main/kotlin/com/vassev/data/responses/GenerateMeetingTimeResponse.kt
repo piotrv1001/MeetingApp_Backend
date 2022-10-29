@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GenerateMeetingTimeResponse(
     val specificDay: SpecificDay,
-    val plans: List<Plan>
+    val plan: Plan
 )

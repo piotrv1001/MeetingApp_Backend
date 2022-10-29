@@ -1,5 +1,6 @@
 package com.vassev.data.service
 
+import com.vassev.data.requests.GenerateTimeRequest
 import com.vassev.data.responses.GenerateMeetingTimeResponse
 import com.vassev.data.responses.PlanResponse
 import com.vassev.domain.data_source.OneTimePlanDataSource
@@ -17,13 +18,14 @@ class GenerateMeetingTimeServiceImpl(
     override suspend fun generateMeetingTime(
         today: SpecificDay,
         userIds: List<String>,
-        duration: Int
+        duration: Int,
+        generateTimeRequest: GenerateTimeRequest
     ): List<GenerateMeetingTimeResponse> {
 
         val resultList = mutableListOf<GenerateMeetingTimeResponse>()
         var date = LocalDate.of(today.year, today.month, today.day)
 
-        for (day in 0..6) {
+        for (day in 0 until 7 * generateTimeRequest.numberOfWeeks) {
             date = date.plusDays(1)
             val currentSpecificDay = SpecificDay(
                 day = date.dayOfMonth,
@@ -39,22 +41,27 @@ class GenerateMeetingTimeServiceImpl(
                 mergedList = if(user == 0) {
                     userPlans
                 } else {
-                    merge(mergedList, userPlans)
+                    mergeList(mergedList, userPlans, duration)
                 }
-                val filteredList = filter(mergedList, duration)
-                resultList.add(
-                    GenerateMeetingTimeResponse(
-                        specificDay = currentSpecificDay,
-                        plans = filteredList
+            }
+            if(mergedList.isNotEmpty()) {
+                mergedList.forEach { plan ->
+                    resultList.add(
+                        GenerateMeetingTimeResponse(
+                            specificDay = currentSpecificDay,
+                            plan = plan
+                        )
                     )
-                )
+                }
+                if(generateTimeRequest.numberOfResults != 0 && resultList.size == generateTimeRequest.numberOfResults) {
+                    return sortList(resultList, generateTimeRequest.preferredTime)
+                }
             }
         }
-
-        return resultList
+        return sortList(resultList, generateTimeRequest.preferredTime)
     }
 
-    private fun merge(currentList: List<Plan>, newList: List<Plan>): MutableList<Plan> {
+    private fun mergeList(currentList: List<Plan>, newList: List<Plan>, duration: Int): MutableList<Plan> {
         val mergedList = mutableListOf<Plan>()
         var i = 0
         var j = 0
@@ -67,20 +74,26 @@ class GenerateMeetingTimeServiceImpl(
                 } else {
                     if(currentList[i].endTime() >= newList[j].endTime())
                     {
-                        mergedList.add(Plan(
+                        val newPlan = Plan(
                             fromHour = currentList[i].fromHour,
                             fromMinute = currentList[i].fromMinute,
                             toHour = newList[j].toHour,
                             toMinute = newList[j].toMinute
-                        ))
+                        )
+                        if(newPlan.isWithinRange(duration)) {
+                            mergedList.add(newPlan)
+                        }
                         j += 1
                     } else {
-                        mergedList.add(Plan(
+                        val newPlan = Plan(
                             fromHour = currentList[i].fromHour,
                             fromMinute = currentList[i].fromMinute,
                             toHour = currentList[i].toHour,
                             toMinute = currentList[i].toMinute
-                        ))
+                        )
+                        if(newPlan.isWithinRange(duration)) {
+                            mergedList.add(newPlan)
+                        }
                         i += 1
                     }
                 }
@@ -89,20 +102,26 @@ class GenerateMeetingTimeServiceImpl(
                 {
                     if(currentList[i].endTime() >= newList[j].endTime())
                     {
-                        mergedList.add(Plan(
+                        val newPlan = Plan(
                             fromHour = newList[j].fromHour,
                             fromMinute = newList[j].fromMinute,
                             toHour = newList[j].toHour,
                             toMinute = newList[j].toMinute
-                        ))
+                        )
+                        if(newPlan.isWithinRange(duration)) {
+                            mergedList.add(newPlan)
+                        }
                         j += 1
                     } else {
-                        mergedList.add(Plan(
+                        val newPlan = Plan(
                             fromHour = newList[j].fromHour,
                             fromMinute = newList[j].fromMinute,
                             toHour = currentList[i].toHour,
                             toMinute = currentList[i].toMinute
-                        ))
+                        )
+                        if(newPlan.isWithinRange(duration)) {
+                            mergedList.add(newPlan)
+                        }
                         i += 1
                     }
                 } else {
@@ -113,10 +132,66 @@ class GenerateMeetingTimeServiceImpl(
         return mergedList
     }
 
-    private fun filter(mergedList: MutableList<Plan>, duration: Int): List<Plan> {
-        return mergedList.filter { plan ->
-            plan.isWithinRange(duration)
+    private fun sortList(mergedList: MutableList<GenerateMeetingTimeResponse>, preferredTime: Int): List<GenerateMeetingTimeResponse> {
+        val range = when(preferredTime) {
+            1 -> {
+                Plan(
+                    fromHour = 0,
+                    fromMinute = 0,
+                    toHour = 12,
+                    toMinute = 0
+                )
+            }
+            2 -> {
+                Plan(
+                    fromHour = 12,
+                    fromMinute = 0,
+                    toHour = 16,
+                    toMinute = 0
+                )
+            }
+            3 -> {
+                Plan(
+                    fromHour = 16,
+                    fromMinute = 0,
+                    toHour = 23,
+                    toMinute = 59
+                )
+            }
+            else -> {
+                Plan(
+                    fromHour = 0,
+                    fromMinute = 0,
+                    toHour = 23,
+                    toMinute = 59
+                )
+            }
         }
+        if(preferredTime == 1 || preferredTime == 2 || preferredTime == 3) {
+            // custom bubble sort
+            for(i in mergedList.indices) {
+                var swapped = false
+                for(j in mergedList.indices - i - 1) {
+                    if(!mergedList[j].plan.isWithinAnotherPlan(range)) {
+                        if(mergedList[j + 1].plan.isWithinAnotherPlan(range)) {
+                            // swap 2 values
+                            mergedList[j] = mergedList[j + 1].also { mergedList[j + 1] = mergedList[j] }
+                            swapped = true
+                        } else {
+                            if(mergedList[j + 1].plan.isCloserToRange(mergedList[j].plan, range)) {
+                                // swap 2 values
+                                mergedList[j] = mergedList[j + 1].also { mergedList[j + 1] = mergedList[j] }
+                                swapped = true
+                            }
+                        }
+                    }
+                }
+                if(!swapped) {
+                    break
+                }
+            }
+        }
+        return mergedList
     }
 
     private fun getUsersPlans(oneTimePlanList: List<Plan>?, repeatedPlanList: List<Plan>?): List<Plan> {

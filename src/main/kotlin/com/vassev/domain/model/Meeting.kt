@@ -10,7 +10,7 @@ data class Meeting(
     val meetingId: String = ObjectId().toString(),
     val name: String,
     val duration: Int,
-    val date: Long,
+    val date: String,
     val location: String,
     val users: List<String> = emptyList()
 )

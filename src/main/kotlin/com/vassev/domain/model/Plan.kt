@@ -26,5 +26,23 @@ data class Plan(
     fun isWithinRange(duration: Int): Boolean {
         return (this.toHour * 60 + this.toMinute) - (this.fromHour * 60 + this.fromMinute) >= duration
     }
+
+    fun isWithinAnotherPlan(anotherPlan: Plan): Boolean {
+        return this.startTime() >= anotherPlan.startTime() && this.endTime() <= anotherPlan.endTime()
+    }
+
+    fun isCloserToRange(anotherPlan: Plan, range: Plan): Boolean {
+        val firstPlanDistance = if(this.startTime() > range.endTime()) {
+            this.startTime() - range.endTime()
+        } else {
+            range.startTime() - this.endTime()
+        }
+        val anotherPlanDistance = if(anotherPlan.startTime() > range.endTime()) {
+            anotherPlan.startTime() - range.endTime()
+        } else {
+            range.startTime() - anotherPlan.endTime()
+        }
+        return firstPlanDistance <= anotherPlanDistance
+    }
 }
 
