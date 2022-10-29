@@ -13,4 +13,6 @@ interface MeetingDataSource {
     suspend fun getAllMeetingsForUser(meetingIds: List<String>): List<Meeting>
 
     suspend fun updateMeeting(meeting: Meeting): Boolean
+
+    suspend fun updateMeetingDate(meetingId: String, date: String): Meeting?
 }

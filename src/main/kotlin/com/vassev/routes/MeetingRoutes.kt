@@ -5,6 +5,8 @@ import com.vassev.domain.data_source.UserDataSource
 import com.vassev.domain.model.Meeting
 import com.vassev.data.requests.MeetingRequest
 import com.vassev.data.requests.MeetingsForUserRequest
+import com.vassev.data.requests.SaveMeetingTimeRequest
+import com.vassev.domain.service.SaveMeetingTimeService
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -13,7 +15,8 @@ import io.ktor.routing.*
 
 fun Route.meeting(
     meetingDataSource: MeetingDataSource,
-    userDataSource: UserDataSource
+    userDataSource: UserDataSource,
+    saveMeetingTimeService: SaveMeetingTimeService
 ) {
     route("/meeting") {
         get {
@@ -75,6 +78,21 @@ fun Route.meeting(
             val wasAcknowledged = meetingDataSource.updateMeeting(request)
             if(!wasAcknowledged) {
                 call.respond(HttpStatusCode.Conflict)
+                return@put
+            }
+            call.respond(HttpStatusCode.OK)
+        }
+        put("/knownTime") {
+            val request = call.receiveOrNull<SaveMeetingTimeRequest>() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@put
+            }
+            val wasOk = saveMeetingTimeService.saveMeetingTime(
+                meetingId = request.meetingId,
+                generateMeetingTimeResponse = request.generateTimeResponse
+            )
+            if(!wasOk) {
+                call.respond(HttpStatusCode.NotFound)
                 return@put
             }
             call.respond(HttpStatusCode.OK)

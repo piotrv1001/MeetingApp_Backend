@@ -2,11 +2,9 @@ package com.vassev.data.data_source
 
 import com.vassev.domain.data_source.MeetingDataSource
 import com.vassev.domain.model.Meeting
-import org.litote.kmongo.MongoOperator
-import org.litote.kmongo.contains
+import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.eq
-import org.litote.kmongo.`in`
+import org.litote.kmongo.coroutine.updateOne
 
 class MeetingDataSourceImpl(
     db: CoroutineDatabase
@@ -32,5 +30,9 @@ class MeetingDataSourceImpl(
 
     override suspend fun updateMeeting(meeting: Meeting): Boolean {
         return meetings.updateOne(Meeting::meetingId eq meeting.meetingId, meeting).wasAcknowledged()
+    }
+
+    override suspend fun updateMeetingDate(meetingId: String, date: String): Meeting? {
+        return meetings.findOneAndUpdate(Meeting::meetingId eq meetingId, setValue(Meeting::date, date))
     }
 }

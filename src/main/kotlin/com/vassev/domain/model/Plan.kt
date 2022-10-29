@@ -8,7 +8,14 @@ data class Plan(
     val toHour: Int,
     val fromMinute: Int,
     val toMinute: Int,
-) {
+): Comparable<Plan> {
+
+    override fun compareTo(other: Plan): Int = when {
+        this.startTime() != other.startTime() -> this.startTime() compareTo other.startTime()
+        this.endTime() != other.endTime() -> this.endTime() compareTo other.endTime()
+        else -> 0
+    }
+
     fun startTime(): HalfPlan {
         return HalfPlan(
             hour = this.fromHour,

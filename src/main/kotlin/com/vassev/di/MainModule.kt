@@ -3,8 +3,10 @@ package com.vassev.di
 import com.vassev.chat_room.RoomController
 import com.vassev.data.data_source.*
 import com.vassev.data.service.GenerateMeetingTimeServiceImpl
+import com.vassev.data.service.SaveMeetingTimeServiceImpl
 import com.vassev.domain.data_source.*
 import com.vassev.domain.service.GenerateMeetingTimeService
+import com.vassev.domain.service.SaveMeetingTimeService
 import com.vassev.security.token.JwtTokenService
 import com.vassev.security.token.TokenService
 import org.koin.dsl.module
@@ -60,5 +62,8 @@ val mainModule = module {
             repeatedPlanDataSource = get(),
             oneTimePlanDataSource = get()
         )
+    }
+    single<SaveMeetingTimeService> {
+        SaveMeetingTimeServiceImpl()
     }
 }

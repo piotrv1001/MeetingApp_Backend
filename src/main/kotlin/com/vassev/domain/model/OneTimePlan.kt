@@ -10,5 +10,6 @@ data class OneTimePlan(
     val oneTimePlanId: String = ObjectId().toString(),
     val specificDay: SpecificDay,
     val userId: String,
-    val plans: List<Plan> = emptyList()
+    val plans: List<Plan> = emptyList(),
+    val name: String = ""
 )

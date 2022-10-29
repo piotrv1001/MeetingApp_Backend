@@ -202,6 +202,6 @@ class GenerateMeetingTimeServiceImpl(
         if(repeatedPlanList != null) {
             resultList.addAll(repeatedPlanList)
         }
-        return resultList
+        return resultList.sorted()
     }
 }
