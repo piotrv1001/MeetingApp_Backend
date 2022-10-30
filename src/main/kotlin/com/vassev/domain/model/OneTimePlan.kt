@@ -11,5 +11,4 @@ data class OneTimePlan(
     val specificDay: SpecificDay,
     val userId: String,
     val plans: List<Plan> = emptyList(),
-    val name: String = ""
 )

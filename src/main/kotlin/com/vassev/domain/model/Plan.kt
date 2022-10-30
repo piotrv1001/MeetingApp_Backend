@@ -8,6 +8,7 @@ data class Plan(
     val toHour: Int,
     val fromMinute: Int,
     val toMinute: Int,
+    val name: String = ""
 ): Comparable<Plan> {
 
     override fun compareTo(other: Plan): Int = when {

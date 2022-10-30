@@ -64,6 +64,10 @@ val mainModule = module {
         )
     }
     single<SaveMeetingTimeService> {
-        SaveMeetingTimeServiceImpl()
+        SaveMeetingTimeServiceImpl(
+            repeatedPlanDataSource = get(),
+            oneTimePlanDataSource = get(),
+            meetingDataSource = get()
+        )
     }
 }

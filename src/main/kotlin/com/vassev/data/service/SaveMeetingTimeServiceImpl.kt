@@ -17,13 +17,7 @@ class SaveMeetingTimeServiceImpl(
 
     override suspend fun saveMeetingTime(meetingId: String, generateMeetingTimeResponse: GenerateMeetingTimeResponse): Boolean {
         val specificDay = generateMeetingTimeResponse.specificDay
-        val todayTime = LocalDate.now()
-        val today = SpecificDay(
-            day = todayTime.dayOfMonth,
-            month = todayTime.monthValue,
-            year = todayTime.year
-        )
-        val date = LocalDate.of(today.year, today.month, today.day)
+        val date = LocalDate.of(specificDay.year, specificDay.month, specificDay.day)
         val currentDayOfWeek = date.dayOfWeek.value
         val day = specificDay.day
         val month = specificDay.month
@@ -55,7 +49,7 @@ class SaveMeetingTimeServiceImpl(
                     toHour = toHour,
                     toMinute = toMinute
                 )
-                insertMeetingIntoCalendar(userPlans, newPlan, meeting.users[user], specificDay, currentDayOfWeek)
+                insertMeetingIntoCalendar(userPlans, newPlan, meeting.users[user], specificDay, currentDayOfWeek, meeting.name)
             }
             return true
         } else {
@@ -94,7 +88,7 @@ class SaveMeetingTimeServiceImpl(
         return resultList.sorted()
     }
 
-    private suspend fun insertMeetingIntoCalendar(userPlans: List<PlanWithType>, newPlan: Plan, userId: String, specificDay: SpecificDay, dayOfWeek: Int) {
+    private suspend fun insertMeetingIntoCalendar(userPlans: List<PlanWithType>, newPlan: Plan, userId: String, specificDay: SpecificDay, dayOfWeek: Int, meetingName: String) {
         for(i in userPlans.indices) {
             if(newPlan.startTime() < userPlans[i].toPlan().endTime()) {
                 if(userPlans[i].repeat) {
@@ -117,23 +111,52 @@ class SaveMeetingTimeServiceImpl(
                         toHour = newPlan.fromHour,
                         toMinute = newPlan.fromMinute
                     )
-                    oneTimePlanDataSource.addPlanToOneTimePlan(
+                    val existingOneTimePlan = oneTimePlanDataSource.getOneTimePlanForUserOnDay(
                         userId = userId,
-                        specificDay = specificDay,
-                        plan = insertedPlan
+                        specificDay = specificDay
                     )
+                    if(existingOneTimePlan != null) {
+                        oneTimePlanDataSource.addPlanToOneTimePlan(
+                            userId = userId,
+                            specificDay = specificDay,
+                            plan = insertedPlan
+                        )
+                    } else {
+                        oneTimePlanDataSource.insertOneTimePlan(
+                            OneTimePlan(
+                                specificDay = specificDay,
+                                userId = userId,
+                                plans = listOf(insertedPlan)
+                            )
+                        )
+                    }
                 }
                 val insertedPlanMiddle = Plan(
                     fromHour = newPlan.fromHour,
                     fromMinute = newPlan.fromMinute,
                     toHour = newPlan.toHour,
-                    toMinute = newPlan.toMinute
+                    toMinute = newPlan.toMinute,
+                    name = meetingName
                 )
-                oneTimePlanDataSource.addPlanToOneTimePlan(
+                val existingOneTimePlanMiddle = oneTimePlanDataSource.getOneTimePlanForUserOnDay(
                     userId = userId,
-                    specificDay = specificDay,
-                    plan = insertedPlanMiddle
+                    specificDay = specificDay
                 )
+                if(existingOneTimePlanMiddle != null) {
+                    oneTimePlanDataSource.addPlanToOneTimePlan(
+                        userId = userId,
+                        specificDay = specificDay,
+                        plan = insertedPlanMiddle
+                    )
+                } else {
+                    oneTimePlanDataSource.insertOneTimePlan(
+                        OneTimePlan(
+                            specificDay = specificDay,
+                            userId = userId,
+                            plans = listOf(insertedPlanMiddle)
+                        )
+                    )
+                }
                 if(userPlans[i].toPlan().endTime() != newPlan.endTime()) {
                     val insertedPlan = Plan(
                         fromHour = newPlan.toHour,
@@ -141,11 +164,25 @@ class SaveMeetingTimeServiceImpl(
                         toHour = userPlans[i].toHour,
                         toMinute = userPlans[i].toMinute
                     )
-                    oneTimePlanDataSource.addPlanToOneTimePlan(
+                    val existingOneTimePlan = oneTimePlanDataSource.getOneTimePlanForUserOnDay(
                         userId = userId,
-                        specificDay = specificDay,
-                        plan = insertedPlan
+                        specificDay = specificDay
                     )
+                    if(existingOneTimePlan != null) {
+                        oneTimePlanDataSource.addPlanToOneTimePlan(
+                            userId = userId,
+                            specificDay = specificDay,
+                            plan = insertedPlan
+                        )
+                    } else {
+                        oneTimePlanDataSource.insertOneTimePlan(
+                            OneTimePlan(
+                                specificDay = specificDay,
+                                userId = userId,
+                                plans = listOf(insertedPlan)
+                            )
+                        )
+                    }
                 }
             }
         }

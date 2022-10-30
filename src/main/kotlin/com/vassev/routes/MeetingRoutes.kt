@@ -70,7 +70,7 @@ fun Route.meeting(
             }
             call.respond(HttpStatusCode.OK)
         }
-        put {
+        put ("/update"){
             val request = call.receiveOrNull<Meeting>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@put
@@ -82,7 +82,7 @@ fun Route.meeting(
             }
             call.respond(HttpStatusCode.OK)
         }
-        put("/knownTime") {
+        put("/saveTime") {
             val request = call.receiveOrNull<SaveMeetingTimeRequest>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@put
