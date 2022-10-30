@@ -97,5 +97,29 @@ fun Route.meeting(
             }
             call.respond(HttpStatusCode.OK)
         }
+        put("/leave/{meetingId}/{userId}") {
+            val meetingId = call.parameters["meetingId"] ?: ""
+            val userId = call.parameters["userId"] ?: ""
+            val wasAcknowledged = meetingDataSource.leaveMeeting(meetingId, userId)
+            if(!wasAcknowledged) {
+                call.respond(HttpStatusCode.Conflict)
+                return@put
+            }
+            val wasAcknowledgedAgain = userDataSource.leaveMeeting(meetingId, userId)
+            if(!wasAcknowledgedAgain) {
+                call.respond(HttpStatusCode.Conflict)
+                return@put
+            }
+            call.respond(HttpStatusCode.OK)
+        }
+        delete("/{meetingId}") {
+            val meetingId = call.parameters["meetingId"] ?: ""
+            val wasAcknowledged = meetingDataSource.deleteMeeting(meetingId)
+            if(!wasAcknowledged) {
+                call.respond(HttpStatusCode.Conflict)
+                return@delete
+            }
+            call.respond(HttpStatusCode.OK)
+        }
     }
 }

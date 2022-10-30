@@ -35,4 +35,13 @@ class MeetingDataSourceImpl(
     override suspend fun updateMeetingDate(meetingId: String, date: String): Meeting? {
         return meetings.findOneAndUpdate(Meeting::meetingId eq meetingId, setValue(Meeting::date, date))
     }
+
+    override suspend fun leaveMeeting(meetingId: String, userId: String): Boolean {
+        return meetings.updateOne(Meeting::meetingId eq meetingId, pull(Meeting::users, userId)).wasAcknowledged()
+    }
+
+    override suspend fun deleteMeeting(meetingId: String): Boolean {
+        return meetings.deleteOneById(meetingId).wasAcknowledged()
+    }
+
 }

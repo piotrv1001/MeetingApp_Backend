@@ -15,4 +15,6 @@ interface UserDataSource {
     suspend fun getAllUsersForMeeting(userIds: List<String>): List<User>
 
     suspend fun updateUsersWithMeeting(userIds: List<String>, meetingId: String): Boolean
+
+    suspend fun leaveMeeting(meetingId: String, userId: String): Boolean
 }

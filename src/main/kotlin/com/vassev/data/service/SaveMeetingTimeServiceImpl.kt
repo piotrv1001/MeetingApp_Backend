@@ -49,7 +49,7 @@ class SaveMeetingTimeServiceImpl(
                     toHour = toHour,
                     toMinute = toMinute
                 )
-                insertMeetingIntoCalendar(userPlans, newPlan, meeting.users[user], specificDay, currentDayOfWeek, meeting.name)
+                insertMeetingIntoCalendar(userPlans, newPlan, meeting.users[user], specificDay, currentDayOfWeek, meeting)
             }
             return true
         } else {
@@ -88,7 +88,7 @@ class SaveMeetingTimeServiceImpl(
         return resultList.sorted()
     }
 
-    private suspend fun insertMeetingIntoCalendar(userPlans: List<PlanWithType>, newPlan: Plan, userId: String, specificDay: SpecificDay, dayOfWeek: Int, meetingName: String) {
+    private suspend fun insertMeetingIntoCalendar(userPlans: List<PlanWithType>, newPlan: Plan, userId: String, specificDay: SpecificDay, dayOfWeek: Int, meeting: Meeting) {
         for(i in userPlans.indices) {
             if(newPlan.startTime() < userPlans[i].toPlan().endTime()) {
                 if(userPlans[i].repeat) {
@@ -136,7 +136,8 @@ class SaveMeetingTimeServiceImpl(
                     fromMinute = newPlan.fromMinute,
                     toHour = newPlan.toHour,
                     toMinute = newPlan.toMinute,
-                    name = meetingName
+                    name = meeting.name,
+                    meetingId = meeting.meetingId
                 )
                 val existingOneTimePlanMiddle = oneTimePlanDataSource.getOneTimePlanForUserOnDay(
                     userId = userId,

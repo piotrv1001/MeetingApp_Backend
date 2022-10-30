@@ -15,4 +15,8 @@ interface MeetingDataSource {
     suspend fun updateMeeting(meeting: Meeting): Boolean
 
     suspend fun updateMeetingDate(meetingId: String, date: String): Meeting?
+
+    suspend fun leaveMeeting(meetingId: String, userId: String): Boolean
+
+    suspend fun deleteMeeting(meetingId: String): Boolean
 }
