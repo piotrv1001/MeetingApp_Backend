@@ -4,12 +4,9 @@ import com.vassev.domain.data_source.OneTimePlanDataSource
 import com.vassev.domain.model.OneTimePlan
 import com.vassev.domain.model.Plan
 import com.vassev.domain.model.SpecificDay
-import org.litote.kmongo.addToSet
-import org.litote.kmongo.and
+import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.updateOne
-import org.litote.kmongo.eq
-import org.litote.kmongo.pull
 
 class OneTimePlanDataSourceImpl(
     db: CoroutineDatabase
@@ -19,6 +16,10 @@ class OneTimePlanDataSourceImpl(
 
     override suspend fun insertOneTimePlan(oneTimePlan: OneTimePlan): Boolean {
         return oneTimePlans.insertOne(oneTimePlan).wasAcknowledged()
+    }
+
+    override suspend fun getAllOneTimePlansForUser(userId: String): List<OneTimePlan> {
+        return oneTimePlans.find(OneTimePlan::userId eq userId).toList()
     }
 
     override suspend fun getOneTimePlanForUserOnDay(userId: String, specificDay: SpecificDay): OneTimePlan? {

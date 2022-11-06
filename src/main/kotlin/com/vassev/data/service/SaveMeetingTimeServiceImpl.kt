@@ -49,6 +49,7 @@ class SaveMeetingTimeServiceImpl(
                     toHour = toHour,
                     toMinute = toMinute
                 )
+                deleteOldMeetingPlanIfExists(meeting.users[user], meetingId)
                 insertMeetingIntoCalendar(userPlans, newPlan, meeting.users[user], specificDay, currentDayOfWeek, meeting)
             }
             return true
@@ -184,6 +185,18 @@ class SaveMeetingTimeServiceImpl(
                             )
                         )
                     }
+                }
+            }
+        }
+    }
+
+    private suspend fun deleteOldMeetingPlanIfExists(userId: String, meetingId: String) {
+        val userPlans = oneTimePlanDataSource.getAllOneTimePlansForUser(userId)
+        for(userPlan in userPlans) {
+            for(plan in userPlan.plans) {
+                if(plan.meetingId == meetingId) {
+                    val specificDay = userPlan.specificDay
+                    oneTimePlanDataSource.deletePlanFromOneTimePlan(userId, specificDay, plan)
                 }
             }
         }

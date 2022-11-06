@@ -8,6 +8,8 @@ interface OneTimePlanDataSource {
 
     suspend fun insertOneTimePlan(oneTimePlan: OneTimePlan): Boolean
 
+    suspend fun getAllOneTimePlansForUser(userId: String): List<OneTimePlan>
+
     suspend fun getOneTimePlanForUserOnDay(userId: String, specificDay: SpecificDay): OneTimePlan?
 
     suspend fun updateOneTimePlan(oneTimePlan: OneTimePlan): Boolean
