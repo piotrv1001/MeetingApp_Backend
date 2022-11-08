@@ -197,7 +197,11 @@ class GenerateMeetingTimeServiceImpl(
     private fun getUsersPlans(oneTimePlanList: List<Plan>?, repeatedPlanList: List<Plan>?): List<Plan> {
         val resultList: MutableList<Plan> = ArrayList()
         if(oneTimePlanList != null) {
-            resultList.addAll(oneTimePlanList)
+            for(oneTimePLan in oneTimePlanList) {
+                if(oneTimePLan.name == "" && oneTimePLan.meetingId == "") {
+                    resultList.add(oneTimePLan)
+                }
+            }
         }
         if(repeatedPlanList != null) {
             resultList.addAll(repeatedPlanList)
