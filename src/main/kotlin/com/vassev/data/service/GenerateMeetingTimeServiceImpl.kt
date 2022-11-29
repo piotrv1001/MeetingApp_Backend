@@ -70,7 +70,7 @@ class GenerateMeetingTimeServiceImpl(
             {
                 if(currentList[i].startTime() >= newList[j].endTime())
                 {
-                    j++
+                    j += 1
                 } else {
                     if(currentList[i].endTime() >= newList[j].endTime())
                     {
