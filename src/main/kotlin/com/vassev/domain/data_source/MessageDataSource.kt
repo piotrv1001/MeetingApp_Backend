@@ -7,4 +7,6 @@ interface MessageDataSource {
     suspend fun insertMessage(message: Message): Boolean
 
     suspend fun getAllMessagesForMeeting(meetingId: String): List<Message>
+
+    suspend fun getLatestMessageForMeeting(meetingId: String): Message?
 }

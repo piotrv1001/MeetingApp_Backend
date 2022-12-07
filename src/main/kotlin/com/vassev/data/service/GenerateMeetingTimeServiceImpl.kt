@@ -54,11 +54,11 @@ class GenerateMeetingTimeServiceImpl(
                     )
                 }
                 if(generateTimeRequest.numberOfResults != 0 && resultList.size == generateTimeRequest.numberOfResults) {
-                    return sortList(resultList, generateTimeRequest.preferredTime)
+                    return resultList
                 }
             }
         }
-        return sortList(resultList, generateTimeRequest.preferredTime)
+        return resultList
     }
 
     private fun mergeList(currentList: List<Plan>, newList: List<Plan>, duration: Int): MutableList<Plan> {
@@ -126,68 +126,6 @@ class GenerateMeetingTimeServiceImpl(
                     }
                 } else {
                     i += 1
-                }
-            }
-        }
-        return mergedList
-    }
-
-    private fun sortList(mergedList: MutableList<GenerateMeetingTimeResponse>, preferredTime: Int): List<GenerateMeetingTimeResponse> {
-        val range = when(preferredTime) {
-            1 -> {
-                Plan(
-                    fromHour = 0,
-                    fromMinute = 0,
-                    toHour = 12,
-                    toMinute = 0
-                )
-            }
-            2 -> {
-                Plan(
-                    fromHour = 12,
-                    fromMinute = 0,
-                    toHour = 16,
-                    toMinute = 0
-                )
-            }
-            3 -> {
-                Plan(
-                    fromHour = 16,
-                    fromMinute = 0,
-                    toHour = 23,
-                    toMinute = 59
-                )
-            }
-            else -> {
-                Plan(
-                    fromHour = 0,
-                    fromMinute = 0,
-                    toHour = 23,
-                    toMinute = 59
-                )
-            }
-        }
-        if(preferredTime == 1 || preferredTime == 2 || preferredTime == 3) {
-            // custom bubble sort
-            for(i in mergedList.indices) {
-                var swapped = false
-                for(j in mergedList.indices - i - 1) {
-                    if(!mergedList[j].plan.isWithinAnotherPlan(range)) {
-                        if(mergedList[j + 1].plan.isWithinAnotherPlan(range)) {
-                            // swap 2 values
-                            mergedList[j] = mergedList[j + 1].also { mergedList[j + 1] = mergedList[j] }
-                            swapped = true
-                        } else {
-                            if(mergedList[j + 1].plan.isCloserToRange(mergedList[j].plan, range)) {
-                                // swap 2 values
-                                mergedList[j] = mergedList[j + 1].also { mergedList[j + 1] = mergedList[j] }
-                                swapped = true
-                            }
-                        }
-                    }
-                }
-                if(!swapped) {
-                    break
                 }
             }
         }

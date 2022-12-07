@@ -12,6 +12,18 @@ fun Route.message(
     route("/message") {
         get("/{meetingId}") {
             val meetingId = call.parameters["meetingId"] ?: ""
+            if(call.request.queryParameters["lastMessage"] == "true") {
+                val lastMessage = messageDataSource.getLatestMessageForMeeting(meetingId)
+                if(lastMessage != null) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        lastMessage
+                    )
+                    return@get
+                }
+                call.respond(HttpStatusCode.NotFound)
+                return@get
+            }
             val messages = messageDataSource.getAllMessagesForMeeting(meetingId)
             call.respond(
                 HttpStatusCode.OK,
