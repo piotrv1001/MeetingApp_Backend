@@ -15,8 +15,7 @@ import org.litote.kmongo.reactivestreams.KMongo
 
 val mainModule = module {
     single {
-//        val mongoPassword = System.getenv("MONGO_PASSWORD")
-        val mongoPassword = "8431563k"
+       val mongoPassword = System.getenv("MONGO_PASSWORD")
         val dbName = "ktor-meeting"
         KMongo.createClient(
             connectionString = "mongodb+srv://piotrv1001:$mongoPassword@cluster0.6bwasqg.mongodb.net/$dbName?retryWrites=true&w=majority"
